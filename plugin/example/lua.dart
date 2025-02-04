@@ -12,7 +12,7 @@ end)
 Future<void> main() async {
   await initPluginSystem();
   final callback = await PluginCallback.default_();
-  await callback.changeOnPrint(
+  callback.changeOnPrint(
     onPrint: (p0) {
       print("SANDBOX: ${p0}");
     },

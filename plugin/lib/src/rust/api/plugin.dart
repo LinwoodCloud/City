@@ -12,14 +12,21 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<PluginCallback>>
 abstract class PluginCallback implements RustOpaqueInterface {
-  Future<void> changeOnPrint(
-      {required FutureOr<void> Function(String) onPrint});
+  void changeOnPrint({required FutureOr<void> Function(String) onPrint});
 
-  static Future<PluginCallback> default_() =>
+  void changeProcessEvent(
+      {required FutureOr<void> Function(String, bool?) processEvent});
+
+  void changeSendEvent(
+      {required FutureOr<void> Function(String, int?) sendEvent});
+
+  static PluginCallback default_() =>
       RustLib.instance.api.crateApiPluginPluginCallbackDefault();
 }
 
-abstract class SetonixPlugin {
+abstract class RustPlugin {
+  Future<void> run();
+
   Future<EventResult> runEvent(
       {required String eventType,
       required String event,

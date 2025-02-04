@@ -125,7 +125,7 @@ class GameTableMapper extends ClassMapperBase<GameTable> {
   static const Field<GameTable,
           IgnoreEqualityBox<Map<VectorDefinition, TableCell>>> _f$cellsBox =
       Field('cellsBox', _$cellsBox,
-          key: 'cells', opt: true, def: const IgnoreEqualityBox({}));
+          key: r'cells', opt: true, def: const IgnoreEqualityBox({}));
   static ItemLocation? _$background(GameTable v) => v.background;
   static const Field<GameTable, ItemLocation> _f$background =
       Field('background', _$background, opt: true);

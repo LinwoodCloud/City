@@ -1,14 +1,25 @@
-use std::{collections::HashSet, future::Future, pin::Pin, sync::Arc};
+
+use std::{collections::HashSet, sync::Arc};
 
 use flutter_rust_bridge::{frb, DartFnFuture};
 use serde::{Deserialize, Serialize};
 use serde_json::{Map, Value};
 
+
+pub type DartCallback<T> = Arc<dyn Fn(T) -> DartFnFuture<()> + Send + Sync>;
+// see https://github.com/rust-lang/lang-team/blob/master/src/design_notes/variadic_generics.md
+// for more information on variadic generics
+pub type DartCallback2<T, U> = Arc<dyn Fn(T, U) -> DartFnFuture<()> + Send + Sync>;
+
+
 pub struct PluginCallback {
-    pub(crate) on_print: Arc<dyn Fn(String) -> Pin<Box<dyn Future<Output = ()> + Send>> + Send + Sync>,
+    pub(crate) on_print: DartCallback<String>,
+    pub(crate) process_event: DartCallback2<String, Option<bool>>,
+    pub(crate) send_event: DartCallback2<String, Option<Channel>>,
 }
 
 impl Default for PluginCallback {
+    #[frb(sync)]
     fn default() -> Self {
         Self {
             on_print: Arc::new(|s| {
@@ -16,21 +27,34 @@ impl Default for PluginCallback {
                     println!("{}", s);
                 })
             }),
+            process_event: Arc::new(|_, _| Box::pin(async {})),
+            send_event: Arc::new(|_, _| Box::pin(async {})),
         }
     }
 }
-
 impl PluginCallback {
+    #[frb(sync)]
     pub fn change_on_print(&mut self, on_print: impl Fn(String) -> DartFnFuture<()> + 'static + Send + Sync) {
         self.on_print = Arc::new(Box::new(on_print)); // or sth like that
+    }
+    
+    #[frb(sync)]
+    pub fn change_process_event(&mut self, process_event: impl Fn(String, Option<bool>) -> DartFnFuture<()> + 'static + Send + Sync) {
+        self.process_event = Arc::new(Box::new(process_event)); // or sth like that
+    }
+
+    #[frb(sync)]
+    pub fn change_send_event(&mut self, send_event: impl Fn(String, Option<Channel>) -> DartFnFuture<()> + 'static + Send + Sync) {
+        self.send_event = Arc::new(Box::new(send_event)); // or sth like that
     }
 }
 
 pub type Channel = i16;
 pub type JsonObject = Map<String, Value>;
 
-pub trait SetonixPlugin {
+pub trait RustPlugin {
     fn run_event(&self, event_type: String, event: String, server_event: String,target: Channel) -> EventResult;
+    fn run(&self) -> anyhow::Result<()>;
 }
 
 #[derive(Serialize, Deserialize)]
