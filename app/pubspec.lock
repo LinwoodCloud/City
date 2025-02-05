@@ -379,10 +379,10 @@ packages:
     dependency: "direct main"
     description:
       name: flame
-      sha256: "0bd0d5bfaf270e4c1624f8d966ca42951479d1b59371058898bdd6ce41bce27a"
+      sha256: "75eb2b2814a0af2686e9f36649f72249f1921b565d11d5bf956d17f9d8cfa67f"
       url: "https://pub.dev"
     source: hosted
-    version: "1.23.0"
+    version: "1.24.0"
   flame_bloc:
     dependency: "direct main"
     description:
@@ -396,10 +396,10 @@ packages:
     dependency: "direct main"
     description:
       name: flame_tiled
-      sha256: "243851c2609cee2a65c7a1deaf3a1364a73ef985d34bd10b01482a9008122cb4"
+      sha256: "9fa050752afcc7600d77f0e1c16306e1f899ed2a8d09cd39684364627e8c532e"
       url: "https://pub.dev"
     source: hosted
-    version: "1.21.2"
+    version: "2.0.0"
   flex_color_scheme:
     dependency: "direct main"
     description:
@@ -459,10 +459,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_markdown
-      sha256: "46cdcdcd216f15ac04c80e24e814a89ea7143654442c53ba67fec349b4d44565"
+      sha256: b3ff1ef5fb3924ee02b4d38b974ffae3969d50603e68787684ee9dd45f6f144a
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.6"
+    version: "0.7.6+1"
   flutter_rust_bridge:
     dependency: transitive
     description:
@@ -1236,14 +1236,13 @@ packages:
     source: hosted
     version: "0.7.3"
   tiled:
-    dependency: "direct overridden"
+    dependency: transitive
     description:
-      path: "packages/tiled"
-      ref: c4fa680778ba36c4cb53f6e49474ea3881b69552
-      resolved-ref: c4fa680778ba36c4cb53f6e49474ea3881b69552
-      url: "https://github.com/CodeDoctorDE/tiled.dart.git"
-    source: git
-    version: "0.10.2"
+      name: tiled
+      sha256: d71b1397d8870af4b0e5a68a8be7a12d561408049fc0d55fe482dc8412e9f461
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.11.0"
   timing:
     dependency: transitive
     description:
@@ -1344,10 +1343,10 @@ packages:
     dependency: transitive
     description:
       name: vector_graphics
-      sha256: a1870d398158844fe5db12441611ed9a2222ff4340258b539eaf3590c1b4bd7e
+      sha256: "44cc7104ff32563122a929e4620cf3efd584194eec6d1d913eb5ba593dbcf6de"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.17"
+    version: "1.1.18"
   vector_graphics_codec:
     dependency: transitive
     description:

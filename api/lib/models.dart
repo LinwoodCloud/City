@@ -6,6 +6,7 @@ export 'src/models/definition.dart';
 export 'src/models/dialog.dart';
 export 'src/models/info.dart';
 export 'src/models/meta.dart';
+export 'src/models/mode.dart';
 export 'src/models/server.dart';
 export 'src/models/table.dart';
 export 'src/models/translation.dart';
