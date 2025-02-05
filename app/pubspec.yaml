@@ -51,8 +51,8 @@ dependencies:
       url: https://github.com/CodeDoctorDE/flame.git
       ref: 2d76592b9d40007ede2dc0cb9c87858e1ec50bb5
       path: packages/flame_bloc
-  flame: ">=1.23.0 <1.24.0"
-  flame_tiled: ">=1.21.1 <1.22.0"
+  flame: ">=1.24.0 <1.25.0"
+  flame_tiled: ">=2.0.0 <2.1.0"
   # Networking
   http: ^1.2.1
   web_socket_channel: ^3.0.0
@@ -93,12 +93,10 @@ dependencies:
   markdown: ^7.2.2
   bloc_concurrency: ^0.3.0
   idb_shim: ^2.6.1+7
-dependency_overrides:
-  tiled:
-    git:
-      url: https://github.com/CodeDoctorDE/tiled.dart.git
-      ref: c4fa680778ba36c4cb53f6e49474ea3881b69552
-      path: packages/tiled
+  rust_lib_setonix_plugin:
+    path: rust_builder
+  setonix_plugin:
+    path: ../plugin
 dev_dependencies:
   flutter_test:
     sdk: flutter

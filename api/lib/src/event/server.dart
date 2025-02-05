@@ -14,6 +14,7 @@ final class WorldInitialized extends ServerWorldEvent
   final Map<String, Set<Channel>>? teamMembers;
   final Channel? id;
   final List<SignatureMetadata>? packsSignature;
+  final bool clearUserInterface;
 
   WorldInitialized({
     this.table,
@@ -21,7 +22,17 @@ final class WorldInitialized extends ServerWorldEvent
     this.teamMembers,
     this.id,
     this.packsSignature,
+    this.clearUserInterface = false,
   });
+
+  factory WorldInitialized.fromMode(GameMode? mode, WorldState state) =>
+      WorldInitialized(
+        clearUserInterface: true,
+        info:
+            state.info.copyWith(teams: mode?.teams ?? {}, script: mode?.script),
+        table: mode?.tables[state.tableName] ?? GameTable(),
+        teamMembers: const {},
+      );
 }
 
 @MappableClass()

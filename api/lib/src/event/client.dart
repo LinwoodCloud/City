@@ -148,3 +148,12 @@ final class ImagesRequest extends ClientWorldEvent with ImagesRequestMappable {
 
   ImagesRequest(this.ids);
 }
+
+@MappableClass()
+final class ModeChangeRequest extends ClientWorldEvent
+    with ModeChangeRequestMappable {
+  final ItemLocation? location;
+
+  ModeChangeRequest(this.location);
+  ModeChangeRequest.plain() : location = null;
+}

@@ -519,12 +519,16 @@ jobs:
         os:
           - name: ubuntu-24.04
             label: linux-x86_64
+            rust: libsetonix_plugin.so
           - name: ubuntu-24.04-arm
             label: linux-arm64
+            rust: libsetonix_plugin.so
           - name: windows-2025
             label: windows-x86_64
+            rust: setonix_plugin.dll
           - name: macos-latest
             label: macos
+            rust: libsetonix_plugin.dylib
     runs-on: ${{ matrix.os.name }}
     steps:
       - name: ⬆️ Checkout
@@ -544,6 +548,10 @@ jobs:
           flutter clean
           flutter pub get
           flutter doctor -v
+      - name: Compile rust
+        working-directory: plugin/rust
+        run: |
+          cargo build --release
       - name: Compile
         run: |
           dart compile exe bin/setonix_server.dart
@@ -552,6 +560,10 @@ jobs:
           mkdir -p server-build
           mv bin/setonix_server.exe server-build/
           mkdir -p server-build/packs
+      - name: Move rust lib
+        working-directory: ./
+        run: |
+          cp plugin/rust/target/release/${{ matrix.os.rust }} server/server-build/
       - name: Build nessesary files
         working-directory: ./
         run: |
