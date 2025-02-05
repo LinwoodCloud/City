@@ -109,15 +109,22 @@ class GameInfoMapper extends ClassMapperBase<GameInfo> {
   static List<String> _$packs(GameInfo v) => v.packs;
   static const Field<GameInfo, List<String>> _f$packs =
       Field('packs', _$packs, opt: true, def: const []);
+  static String? _$script(GameInfo v) => v.script;
+  static const Field<GameInfo, String> _f$script =
+      Field('script', _$script, opt: true);
 
   @override
   final MappableFields<GameInfo> fields = const {
     #teams: _f$teams,
     #packs: _f$packs,
+    #script: _f$script,
   };
 
   static GameInfo _instantiate(DecodingData data) {
-    return GameInfo(teams: data.dec(_f$teams), packs: data.dec(_f$packs));
+    return GameInfo(
+        teams: data.dec(_f$teams),
+        packs: data.dec(_f$packs),
+        script: data.dec(_f$script));
   }
 
   @override
@@ -172,7 +179,7 @@ abstract class GameInfoCopyWith<$R, $In extends GameInfo, $Out>
   MapCopyWith<$R, String, GameTeam, GameTeamCopyWith<$R, GameTeam, GameTeam>>
       get teams;
   ListCopyWith<$R, String, ObjectCopyWith<$R, String, String>> get packs;
-  $R call({Map<String, GameTeam>? teams, List<String>? packs});
+  $R call({Map<String, GameTeam>? teams, List<String>? packs, String? script});
   GameInfoCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(Then<$Out2, $R2> t);
 }
 
@@ -193,15 +200,20 @@ class _GameInfoCopyWithImpl<$R, $Out>
       ListCopyWith($value.packs, (v, t) => ObjectCopyWith(v, $identity, t),
           (v) => call(packs: v));
   @override
-  $R call({Map<String, GameTeam>? teams, List<String>? packs}) =>
+  $R call(
+          {Map<String, GameTeam>? teams,
+          List<String>? packs,
+          Object? script = $none}) =>
       $apply(FieldCopyWithData({
         if (teams != null) #teams: teams,
-        if (packs != null) #packs: packs
+        if (packs != null) #packs: packs,
+        if (script != $none) #script: script
       }));
   @override
   GameInfo $make(CopyWithData data) => GameInfo(
       teams: data.get(#teams, or: $value.teams),
-      packs: data.get(#packs, or: $value.packs));
+      packs: data.get(#packs, or: $value.packs),
+      script: data.get(#script, or: $value.script));
 
   @override
   GameInfoCopyWith<$R2, GameInfo, $Out2> $chain<$R2, $Out2>(

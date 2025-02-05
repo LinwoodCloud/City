@@ -47,6 +47,11 @@ jobs:
       - name: Analyze project source
         run: |
           flutter analyze --fatal-infos
+      - name: Build flutter_rust_bridge bindings
+        if: matrix.projects == 'plugin'
+        run: |
+          cargo install flutter_rust_bridge_codegen
+          flutter_rust_bridge_codegen generate
       - name: Run build_runner
         if: matrix.projects == 'api' || matrix.projects == 'app'
         run: dart run build_runner build --delete-conflicting-outputs

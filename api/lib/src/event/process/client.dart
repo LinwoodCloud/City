@@ -69,6 +69,7 @@ bool isValidClientEvent(
                       .tiles
                       .length -
                   1),
+      ModeChangeRequest() => channel == kAuthorityChannel,
       _ => true,
     };
 
@@ -271,5 +272,12 @@ ServerResponse? processClientEvent(
             return MapEntry(e, image);
           }).nonNulls)),
           channel);
+    case ModeChangeRequest():
+      final location = event.location;
+      final mode = location == null
+          ? null
+          : assetManager.getPack(location.namespace)?.getMode(location.id);
+      return ServerResponse.builder(
+          WorldInitialized.fromMode(mode, state), channel);
   }
 }

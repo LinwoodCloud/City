@@ -9,16 +9,14 @@ part 'mode.mapper.dart';
 final class GameMode with GameModeMappable {
   final String? script;
 
-  final Map<String, GameTable> table;
+  final Map<String, GameTable> tables;
   final String tableName;
-  final List<GameTeam> teams;
+  final Map<String, GameTeam> teams;
 
   GameMode({
     required this.script,
-    this.table = const {
-      '': GameTable(),
-    },
+    this.tables = const {},
     this.tableName = '',
-    this.teams = const [],
+    this.teams = const {},
   });
 }

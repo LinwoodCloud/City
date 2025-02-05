@@ -159,6 +159,7 @@ fn wire__crate__api__luau__LuauPlugin_run_event_impl(
             let api_event_type = <String>::sse_decode(&mut deserializer);
             let api_event = <String>::sse_decode(&mut deserializer);
             let api_server_event = <String>::sse_decode(&mut deserializer);
+            let api_source = <i16>::sse_decode(&mut deserializer);
             let api_target = <i16>::sse_decode(&mut deserializer);
             deserializer.end();
             move |context| {
@@ -182,6 +183,7 @@ fn wire__crate__api__luau__LuauPlugin_run_event_impl(
                         api_event_type,
                         api_event,
                         api_server_event,
+                        api_source,
                         api_target,
                     ))?;
                     Ok(output_ok)

@@ -89,6 +89,7 @@ abstract class RustLibApi extends BaseApi {
       required String eventType,
       required String event,
       required String serverEvent,
+      required int source,
       required int target});
 
   void crateApiPluginPluginCallbackChangeOnPrint(
@@ -196,6 +197,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       required String eventType,
       required String event,
       required String serverEvent,
+      required int source,
       required int target}) {
     return handler.executeNormal(NormalTask(
       callFfi: (port_) {
@@ -205,6 +207,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         sse_encode_String(eventType, serializer);
         sse_encode_String(event, serializer);
         sse_encode_String(serverEvent, serializer);
+        sse_encode_i_16(source, serializer);
         sse_encode_i_16(target, serializer);
         pdeCallFfi(generalizedFrbRustBinding, serializer,
             funcId: 3, port: port_);
@@ -214,7 +217,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
         decodeErrorData: null,
       ),
       constMeta: kCrateApiLuauLuauPluginRunEventConstMeta,
-      argValues: [that, eventType, event, serverEvent, target],
+      argValues: [that, eventType, event, serverEvent, source, target],
       apiImpl: this,
     ));
   }
@@ -222,7 +225,14 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiLuauLuauPluginRunEventConstMeta =>
       const TaskConstMeta(
         debugName: "LuauPlugin_run_event",
-        argNames: ["that", "eventType", "event", "serverEvent", "target"],
+        argNames: [
+          "that",
+          "eventType",
+          "event",
+          "serverEvent",
+          "source",
+          "target"
+        ],
       );
 
   @override
@@ -1256,12 +1266,14 @@ class LuauPluginImpl extends RustOpaque implements LuauPlugin {
           {required String eventType,
           required String event,
           required String serverEvent,
+          required int source,
           required int target}) =>
       RustLib.instance.api.crateApiLuauLuauPluginRunEvent(
           that: this,
           eventType: eventType,
           event: event,
           serverEvent: serverEvent,
+          source: source,
           target: target);
 }
 

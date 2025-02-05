@@ -11,6 +11,7 @@ import 'package:setonix_api/setonix_api.dart';
 import 'package:setonix_server/src/asset.dart';
 import 'package:setonix_server/src/programs/packs.dart';
 import 'package:setonix_server/src/programs/players.dart';
+import 'package:setonix_server/src/programs/reset.dart';
 import 'package:setonix_server/src/programs/save.dart';
 import 'package:setonix_server/src/programs/say.dart';
 import 'package:setonix_server/src/programs/stop.dart';
@@ -34,51 +35,48 @@ final class SetonixServer extends Bloc<PlayableWorldEvent, WorldState> {
   final Consoler consoler;
   final ServerAssetManager assetManager;
   final String? worldFile;
-  final eventSystem = EventSystem();
+  late final PluginSystem pluginSystem;
+  final SetonixPlugin _serverPlugin;
   bool autosave = false;
 
   NetworkerSocketServer? _server;
   NetworkerPipe<dynamic, WorldEvent>? _pipe;
 
+  EventSystem get eventSystem => _serverPlugin.eventSystem;
+
   SetonixServer._(
       this.worldFile, this.consoler, SetonixData data, this.assetManager)
-      : super(WorldState(
+      : _serverPlugin = SetonixPlugin(),
+        super(WorldState(
           data: data,
           table: data.getTableOrDefault(),
           metadata: data.getMetadataOrDefault(),
           info: data.getInfoOrDefault(),
         )) {
+    pluginSystem = PluginSystem(
+      onProcess: (p0, p1, [force = false]) {
+        process(p1, force);
+      },
+      onSendEvent: (p0, p1) {
+        sendEvent(p1.data, p1.channel);
+      },
+      playersGetter: () => players.keys.toList(),
+      stateGetter: () => state,
+    );
+    pluginSystem.registerPlugin('', SetonixPlugin());
     on<ServerWorldEvent>((event, emit) async {
       final signature = assetManager.createSignature();
       final processed =
           await _computeEvent(event, state, signature.values.toList());
       final newState = processed.state;
       processed.responses.forEach(process);
+      if (event is WorldInitialized) {
+        log("World initialized${(event.info?.script != null) ? " with script ${event.info?.script}" : ""}");
+      }
       if (newState == null) return;
       emit(newState);
       return save();
     }, transformer: sequential());
-    on<ResetWorld>((event, emit) async {
-      final data = SetonixData.empty().setInfo(GameInfo(
-        packs: assetManager.getPackIds().toList(),
-      ));
-      final table = data.getTableOrDefault();
-      final metadata = data.getMetadataOrDefault();
-      final info = data.getInfoOrDefault();
-      emit(WorldState(
-        data: data,
-        table: table,
-        metadata: metadata,
-        info: info,
-      ));
-      _pipe?.sendMessage(
-        WorldInitialized(
-          table: data.getTableOrDefault(),
-          info: data.getInfoOrDefault(),
-          packsSignature: assetManager.createSignature().values.toList(),
-        ),
-      );
-    });
     on<ImagesUpdated>((event, emit) {
       emit(state.copyWith(images: event.images));
     });
@@ -132,6 +130,13 @@ final class SetonixServer extends Bloc<PlayableWorldEvent, WorldState> {
     }
     log("Starting server on port $port", level: LogLevel.info);
     log('Verbose logging activated', level: LogLevel.verbose);
+    try {
+      await initPluginSystem();
+      log('Plugin system initialized', level: LogLevel.info);
+    } catch (e) {
+      log('Error initializing plugin system: $e, continuing without',
+          level: LogLevel.warning);
+    }
     this.autosave = autosave;
     _maxPlayers = maxPlayers;
     SecurityContext? securityContext;
@@ -167,12 +172,15 @@ final class SetonixServer extends Bloc<PlayableWorldEvent, WorldState> {
       ..connect(StringNetworkerPlugin()..connect(transformer));
     await _server?.init();
 
-    consoler.registerProgram('stop', StopProgram(this));
-    consoler.registerProgram('save', SaveProgram(this));
-    consoler.registerProgram('packs', PacksProgram(this));
-    consoler.registerProgram('players', PlayersProgram(this));
-    consoler.registerProgram('say', SayProgram(this));
-    consoler.registerProgram(null, UnknownProgram());
+    consoler.registerPrograms({
+      'stop': StopProgram(this),
+      'save': SaveProgram(this),
+      'packs': PacksProgram(this),
+      'players': PlayersProgram(this),
+      'say': SayProgram(this),
+      'reset': ResetProgram(this),
+      null: UnknownProgram(),
+    });
   }
 
   static R _runStaticLogZone<R>(Consoler consoler, R Function() body) =>
@@ -183,15 +191,12 @@ final class SetonixServer extends Bloc<PlayableWorldEvent, WorldState> {
       ));
 
   Future<void> run() async {
-    await initPluginSystem();
-    final result = await simpleAdderTwinNormal(a: 1, b: 6);
-    print("1 + 6 = $result");
     consoler.run();
     log('Server running on ${_server?.address}', level: LogLevel.info);
     await _server?.onClosed.first;
   }
 
-  void _onClientEvent(NetworkerPacket<WorldEvent?> packet,
+  void _onClientEvent(NetworkerPacket<WorldEvent> packet,
       [bool force = false]) async {
     final data = packet.data;
     ServerResponse? process;
@@ -285,8 +290,8 @@ final class SetonixServer extends Bloc<PlayableWorldEvent, WorldState> {
     return true;
   }
 
-  Future<void> resetWorld() async {
-    add(ResetWorld());
+  Future<void> resetWorld([ItemLocation? mode]) async {
+    process(ModeChangeRequest(mode));
     await stream.first;
   }
 

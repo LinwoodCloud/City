@@ -101,6 +101,8 @@ ServerProcessed processServerEvent(
         id: event.id ?? state.id,
         teamMembers: event.teamMembers ?? state.teamMembers,
         info: event.info ?? state.info,
+        dialogs: event.clearUserInterface ? [] : state.dialogs,
+        images: event.clearUserInterface ? {} : state.images,
       ));
     case TeamJoined():
       return ServerProcessed(state.copyWith(

@@ -35,6 +35,7 @@ Future<void> main() async {
     event: '{"key": "value"}',
     eventType: 'schoo',
     serverEvent: '{"key": "server-value"}',
+    source: 0,
     target: 0,
   );
   print("cancelled: ${result.serverEvent == null}");
@@ -42,6 +43,7 @@ Future<void> main() async {
     event: '{"key": "value"}',
     eventType: 'another',
     serverEvent: '{"key": "server-value"}',
+    source: 0,
     target: 0,
   );
   print("cancelled: ${result.serverEvent == null}");

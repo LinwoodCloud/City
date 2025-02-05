@@ -220,6 +220,9 @@ class WorldInitializedMapper extends SubClassMapperBase<WorldInitialized> {
       v.packsSignature;
   static const Field<WorldInitialized, List<SignatureMetadata>>
       _f$packsSignature = Field('packsSignature', _$packsSignature, opt: true);
+  static bool _$clearUserInterface(WorldInitialized v) => v.clearUserInterface;
+  static const Field<WorldInitialized, bool> _f$clearUserInterface =
+      Field('clearUserInterface', _$clearUserInterface, opt: true, def: false);
 
   @override
   final MappableFields<WorldInitialized> fields = const {
@@ -228,6 +231,7 @@ class WorldInitializedMapper extends SubClassMapperBase<WorldInitialized> {
     #teamMembers: _f$teamMembers,
     #id: _f$id,
     #packsSignature: _f$packsSignature,
+    #clearUserInterface: _f$clearUserInterface,
   };
 
   @override
@@ -244,7 +248,8 @@ class WorldInitializedMapper extends SubClassMapperBase<WorldInitialized> {
         info: data.dec(_f$info),
         teamMembers: data.dec(_f$teamMembers),
         id: data.dec(_f$id),
-        packsSignature: data.dec(_f$packsSignature));
+        packsSignature: data.dec(_f$packsSignature),
+        clearUserInterface: data.dec(_f$clearUserInterface));
   }
 
   @override
@@ -314,7 +319,8 @@ abstract class WorldInitializedCopyWith<$R, $In extends WorldInitialized, $Out>
       GameInfo? info,
       Map<String, Set<int>>? teamMembers,
       int? id,
-      List<SignatureMetadata>? packsSignature});
+      List<SignatureMetadata>? packsSignature,
+      bool? clearUserInterface});
   WorldInitializedCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
       Then<$Out2, $R2> t);
 }
@@ -354,13 +360,15 @@ class _WorldInitializedCopyWithImpl<$R, $Out>
           Object? info = $none,
           Object? teamMembers = $none,
           Object? id = $none,
-          Object? packsSignature = $none}) =>
+          Object? packsSignature = $none,
+          bool? clearUserInterface}) =>
       $apply(FieldCopyWithData({
         if (table != $none) #table: table,
         if (info != $none) #info: info,
         if (teamMembers != $none) #teamMembers: teamMembers,
         if (id != $none) #id: id,
-        if (packsSignature != $none) #packsSignature: packsSignature
+        if (packsSignature != $none) #packsSignature: packsSignature,
+        if (clearUserInterface != null) #clearUserInterface: clearUserInterface
       }));
   @override
   WorldInitialized $make(CopyWithData data) => WorldInitialized(
@@ -368,7 +376,9 @@ class _WorldInitializedCopyWithImpl<$R, $Out>
       info: data.get(#info, or: $value.info),
       teamMembers: data.get(#teamMembers, or: $value.teamMembers),
       id: data.get(#id, or: $value.id),
-      packsSignature: data.get(#packsSignature, or: $value.packsSignature));
+      packsSignature: data.get(#packsSignature, or: $value.packsSignature),
+      clearUserInterface:
+          data.get(#clearUserInterface, or: $value.clearUserInterface));
 
   @override
   WorldInitializedCopyWith<$R2, WorldInitialized, $Out2> $chain<$R2, $Out2>(
@@ -1650,6 +1660,7 @@ class ClientWorldEventMapper extends SubClassMapperBase<ClientWorldEvent> {
       BoardMoveRequestMapper.ensureInitialized();
       DialogCloseRequestMapper.ensureInitialized();
       ImagesRequestMapper.ensureInitialized();
+      ModeChangeRequestMapper.ensureInitialized();
       HybridWorldEventMapper.ensureInitialized();
     }
     return _instance!;
@@ -3093,6 +3104,129 @@ class _ImagesRequestCopyWithImpl<$R, $Out>
   ImagesRequestCopyWith<$R2, ImagesRequest, $Out2> $chain<$R2, $Out2>(
           Then<$Out2, $R2> t) =>
       _ImagesRequestCopyWithImpl($value, $cast, t);
+}
+
+class ModeChangeRequestMapper extends SubClassMapperBase<ModeChangeRequest> {
+  ModeChangeRequestMapper._();
+
+  static ModeChangeRequestMapper? _instance;
+  static ModeChangeRequestMapper ensureInitialized() {
+    if (_instance == null) {
+      MapperContainer.globals.use(_instance = ModeChangeRequestMapper._());
+      ClientWorldEventMapper.ensureInitialized().addSubMapper(_instance!);
+      ItemLocationMapper.ensureInitialized();
+    }
+    return _instance!;
+  }
+
+  @override
+  final String id = 'ModeChangeRequest';
+
+  static ItemLocation? _$location(ModeChangeRequest v) => v.location;
+  static const Field<ModeChangeRequest, ItemLocation> _f$location =
+      Field('location', _$location);
+
+  @override
+  final MappableFields<ModeChangeRequest> fields = const {
+    #location: _f$location,
+  };
+
+  @override
+  final String discriminatorKey = 'type';
+  @override
+  final dynamic discriminatorValue = 'ModeChangeRequest';
+  @override
+  late final ClassMapperBase superMapper =
+      ClientWorldEventMapper.ensureInitialized();
+
+  static ModeChangeRequest _instantiate(DecodingData data) {
+    return ModeChangeRequest(data.dec(_f$location));
+  }
+
+  @override
+  final Function instantiate = _instantiate;
+
+  static ModeChangeRequest fromMap(Map<String, dynamic> map) {
+    return ensureInitialized().decodeMap<ModeChangeRequest>(map);
+  }
+
+  static ModeChangeRequest fromJson(String json) {
+    return ensureInitialized().decodeJson<ModeChangeRequest>(json);
+  }
+}
+
+mixin ModeChangeRequestMappable {
+  String toJson() {
+    return ModeChangeRequestMapper.ensureInitialized()
+        .encodeJson<ModeChangeRequest>(this as ModeChangeRequest);
+  }
+
+  Map<String, dynamic> toMap() {
+    return ModeChangeRequestMapper.ensureInitialized()
+        .encodeMap<ModeChangeRequest>(this as ModeChangeRequest);
+  }
+
+  ModeChangeRequestCopyWith<ModeChangeRequest, ModeChangeRequest,
+          ModeChangeRequest>
+      get copyWith => _ModeChangeRequestCopyWithImpl(
+          this as ModeChangeRequest, $identity, $identity);
+  @override
+  String toString() {
+    return ModeChangeRequestMapper.ensureInitialized()
+        .stringifyValue(this as ModeChangeRequest);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return ModeChangeRequestMapper.ensureInitialized()
+        .equalsValue(this as ModeChangeRequest, other);
+  }
+
+  @override
+  int get hashCode {
+    return ModeChangeRequestMapper.ensureInitialized()
+        .hashValue(this as ModeChangeRequest);
+  }
+}
+
+extension ModeChangeRequestValueCopy<$R, $Out>
+    on ObjectCopyWith<$R, ModeChangeRequest, $Out> {
+  ModeChangeRequestCopyWith<$R, ModeChangeRequest, $Out>
+      get $asModeChangeRequest =>
+          $base.as((v, t, t2) => _ModeChangeRequestCopyWithImpl(v, t, t2));
+}
+
+abstract class ModeChangeRequestCopyWith<$R, $In extends ModeChangeRequest,
+    $Out> implements ClientWorldEventCopyWith<$R, $In, $Out> {
+  ItemLocationCopyWith<$R, ItemLocation, ItemLocation>? get location;
+  @override
+  $R call({ItemLocation? location});
+  ModeChangeRequestCopyWith<$R2, $In, $Out2> $chain<$R2, $Out2>(
+      Then<$Out2, $R2> t);
+}
+
+class _ModeChangeRequestCopyWithImpl<$R, $Out>
+    extends ClassCopyWithBase<$R, ModeChangeRequest, $Out>
+    implements ModeChangeRequestCopyWith<$R, ModeChangeRequest, $Out> {
+  _ModeChangeRequestCopyWithImpl(super.value, super.then, super.then2);
+
+  @override
+  late final ClassMapperBase<ModeChangeRequest> $mapper =
+      ModeChangeRequestMapper.ensureInitialized();
+  @override
+  ItemLocationCopyWith<$R, ItemLocation, ItemLocation>? get location =>
+      $value.location?.copyWith.$chain((v) => call(location: v));
+  @override
+  $R call({Object? location = $none}) =>
+      $apply(FieldCopyWithData({if (location != $none) #location: location}));
+  @override
+  ModeChangeRequest $make(CopyWithData data) =>
+      ModeChangeRequest(data.get(#location, or: $value.location));
+
+  @override
+  ModeChangeRequestCopyWith<$R2, ModeChangeRequest, $Out2> $chain<$R2, $Out2>(
+          Then<$Out2, $R2> t) =>
+      _ModeChangeRequestCopyWithImpl($value, $cast, t);
 }
 
 class HybridWorldEventMapper extends SubClassMapperBase<HybridWorldEvent> {

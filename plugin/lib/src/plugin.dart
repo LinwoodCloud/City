@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:networker/networker.dart';
 import 'package:setonix_api/event.dart';
 import 'package:setonix_plugin/setonix_plugin.dart';
+import 'package:setonix_plugin/src/rust/frb_generated.dart';
 
 typedef PluginProcessCallback = void Function(String, WorldEvent, [bool force]);
 typedef PluginSendEventCallback = void Function(
@@ -41,6 +43,7 @@ final class PluginSystem {
 
   SetonixPlugin registerLuauPlugin(String name, String code,
       {void Function(String)? onPrint}) {
+    if (!_nativeEnabled) throw Exception('Native not enabled');
     final plugin = RustSetonixPlugin.build(
         (c) => LuauPlugin(code: code, callback: c), this);
     registerPlugin(name, plugin);
@@ -54,8 +57,31 @@ final class PluginSystem {
     data?.$3.cancel();
   }
 
-  void dispose() {
+  bool get _nativeEnabled => RustLib.instance.initialized;
+
+  void dispose([bool disposeNative = true]) {
     List<String>.from(_plugins.keys).forEach(unregisterPlugin);
+    if (disposeNative) disposePluginSystem();
+  }
+
+  void fire(Event event) {
+    for (final plugin in _plugins.values) {
+      plugin.$1.eventSystem.fire(event);
+    }
+  }
+
+  GameProperty runPing(HttpRequest request, GameProperty property) {
+    var result = property;
+    for (final plugin in _plugins.values) {
+      result = plugin.$1.eventSystem.runPing(request, result);
+    }
+    return result;
+  }
+
+  void runLeaveCallback(Channel channel, ConnectionInfo info) {
+    for (final plugin in _plugins.values) {
+      plugin.$1.eventSystem.runLeaveCallback(channel, info);
+    }
   }
 }
 
@@ -123,6 +149,15 @@ final class RustSetonixPlugin extends SetonixPlugin {
         StateFieldAccess.players => jsonEncode(pluginSystem.playersGetter()),
         StateFieldAccess.teamMembers => jsonEncode(state.teamMembers),
       };
+    });
+    instance.eventSystem.on<WorldEvent>((e) {
+      instance.plugin.runEvent(
+        eventType: e.clientEvent.runtimeType.toString(),
+        event: e.clientEvent.toJson(),
+        serverEvent: e.serverEvent.toJson(),
+        target: e.target,
+        source: e.source,
+      );
     });
     return instance;
   }

@@ -69,7 +69,7 @@ pub type Channel = i16;
 pub type JsonObject = Map<String, Value>;
 
 pub trait RustPlugin {
-    fn run_event(&self, event_type: String, event: String, server_event: String,target: Channel) -> EventResult;
+    fn run_event(&self, event_type: String, event: String, server_event: String, source: Channel, target: Channel) -> EventResult;
     fn run(&self) -> anyhow::Result<()>;
 }
 

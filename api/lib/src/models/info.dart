@@ -8,10 +8,12 @@ part 'info.mapper.dart';
 class GameInfo with GameInfoMappable {
   final Map<String, GameTeam> teams;
   final List<String> packs;
+  final String? script;
 
   const GameInfo({
     this.teams = const {},
     this.packs = const [],
+    this.script,
   });
 }
 
