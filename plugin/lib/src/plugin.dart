@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:networker/networker.dart';
-import 'package:setonix_api/event.dart';
+import 'package:setonix_api/setonix_api.dart';
 import 'package:setonix_plugin/setonix_plugin.dart';
 import 'package:setonix_plugin/src/rust/frb_generated.dart';
 
@@ -55,6 +55,16 @@ final class PluginSystem {
     data?.$1.dispose();
     data?.$2.cancel();
     data?.$3.cancel();
+  }
+
+  void loadLuaPlugin(AssetManager assetManager, String script,
+      [String name = 'game']) {
+    unregisterPlugin(name);
+    final location = ItemLocation.fromString(script);
+    final data =
+        assetManager.getPack(location.namespace)?.getScript(location.id);
+    if (data == null) return;
+    registerLuauPlugin(name, data);
   }
 
   bool get _nativeEnabled => RustLib.instance.initialized;

@@ -71,7 +71,9 @@ final class SetonixServer extends Bloc<PlayableWorldEvent, WorldState> {
       final newState = processed.state;
       processed.responses.forEach(process);
       if (event is WorldInitialized) {
-        log("World initialized${(event.info?.script != null) ? " with script ${event.info?.script}" : ""}");
+        log("World initialized${(event.info?.script != null) ? " with script ${event.info?.script}" : ""}",
+            level: LogLevel.info);
+        await _loadScript((newState ?? state).info.script);
       }
       if (newState == null) return;
       emit(newState);
@@ -171,6 +173,7 @@ final class SetonixServer extends Bloc<PlayableWorldEvent, WorldState> {
       ..clientDisconnect.listen(_onLeave)
       ..connect(StringNetworkerPlugin()..connect(transformer));
     await _server?.init();
+    await _loadScript(state.info.script);
 
     consoler.registerPrograms({
       'stop': StopProgram(this),
@@ -189,6 +192,15 @@ final class SetonixServer extends Bloc<PlayableWorldEvent, WorldState> {
           consoler.print(message);
         },
       ));
+
+  Future<void> _loadScript(String? script) async {
+    try {
+      if (script == null) return;
+      pluginSystem.loadLuaPlugin(assetManager, script);
+    } catch (e) {
+      log('Error loading script: $e', level: LogLevel.error);
+    }
+  }
 
   Future<void> run() async {
     consoler.run();
