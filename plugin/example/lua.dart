@@ -3,7 +3,9 @@ import 'package:setonix_plugin/setonix_plugin.dart';
 
 const LUA_SCRIPT = '''
 print("Hello World")
-event:schoo(function(_, details)
+local table = State.Table
+print('Hello '..table.key)
+Events.schoo.Connect(function(_, details)
   details["cancelled"] = true
   print("schoo event")
 end)
@@ -17,6 +19,10 @@ Future<void> main() async {
       print("SANDBOX: ${p0}");
     },
   );
+  callback.changeStateFieldAccess(stateFieldAccess: (p0) {
+    print("FIELD: ${p0}");
+    return '{"key": "value"}';
+  });
   final plugin = LuauPlugin(code: LUA_SCRIPT, callback: callback);
   try {
     await plugin.run();

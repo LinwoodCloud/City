@@ -6,8 +6,9 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `new`
-// These types are ignored because they are not used by any `pub` functions: `EventDetails`
+// These functions are ignored because they are not marked as `pub`: `get`, `new`
+// These types are ignored because they are not used by any `pub` functions: `EventDetails`, `StateFieldAccessIter`
+// These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `clone`, `clone`, `clone`, `fmt`, `fmt`, `iter`, `len`, `next_back`, `next`, `nth`, `size_hint`
 // These functions are ignored (category: IgnoreBecauseExplicitAttribute): `from`
 
 // Rust type: RustOpaqueMoi<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<PluginCallback>>
@@ -19,6 +20,9 @@ abstract class PluginCallback implements RustOpaqueInterface {
 
   void changeSendEvent(
       {required FutureOr<void> Function(String, int?) sendEvent});
+
+  void changeStateFieldAccess(
+      {required FutureOr<String> Function(StateFieldAccess) stateFieldAccess});
 
   static PluginCallback default_() =>
       RustLib.instance.api.crateApiPluginPluginCallbackDefault();
@@ -57,4 +61,13 @@ class EventResult {
           target == other.target &&
           serverEvent == other.serverEvent &&
           needsUpdate == other.needsUpdate;
+}
+
+enum StateFieldAccess {
+  table,
+  tableName,
+  info,
+  players,
+  teamMembers,
+  ;
 }

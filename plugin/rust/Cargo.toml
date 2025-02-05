@@ -13,6 +13,7 @@ mlua = { version = "0.10.2", features = ["luau", "send", "async", "anyhow", "ser
 futures = "0.3"
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
+strum = { version = "0.26", features = ["derive"] }
 
 [features]
 

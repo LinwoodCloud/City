@@ -40,7 +40,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueMoi,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.7.1";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 1864759339;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = 2139481266;
 
 // Section: executor
 
@@ -354,6 +354,61 @@ fn wire__crate__api__plugin__PluginCallback_change_send_event_impl(
         },
     )
 }
+fn wire__crate__api__plugin__PluginCallback_change_state_field_access_impl(
+    ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
+    rust_vec_len_: i32,
+    data_len_: i32,
+) -> flutter_rust_bridge::for_generated::WireSyncRust2DartSse {
+    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::SseCodec, _>(
+        flutter_rust_bridge::for_generated::TaskInfo {
+            debug_name: "PluginCallback_change_state_field_access",
+            port: None,
+            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
+        },
+        move || {
+            let message = unsafe {
+                flutter_rust_bridge::for_generated::Dart2RustMessageSse::from_wire(
+                    ptr_,
+                    rust_vec_len_,
+                    data_len_,
+                )
+            };
+            let mut deserializer =
+                flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+            let api_that = <RustOpaqueMoi<
+                flutter_rust_bridge::for_generated::RustAutoOpaqueInner<PluginCallback>,
+            >>::sse_decode(&mut deserializer);
+            let api_state_field_access =
+                decode_DartFn_Inputs_state_field_access_Output_String_AnyhowException(
+                    <flutter_rust_bridge::DartOpaque>::sse_decode(&mut deserializer),
+                );
+            deserializer.end();
+            transform_result_sse::<_, ()>((move || {
+                let mut api_that_guard = None;
+                let decode_indices_ =
+                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
+                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
+                            &api_that, 0, true,
+                        ),
+                    ]);
+                for i in decode_indices_ {
+                    match i {
+                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref_mut()),
+                        _ => unreachable!(),
+                    }
+                }
+                let mut api_that_guard = api_that_guard.unwrap();
+                let output_ok = Result::<_, ()>::Ok({
+                    crate::api::plugin::PluginCallback::change_state_field_access(
+                        &mut *api_that_guard,
+                        api_state_field_access,
+                    );
+                })?;
+                Ok(output_ok)
+            })())
+        },
+    )
+}
 fn wire__crate__api__plugin__PluginCallback_default_impl(
     ptr_: flutter_rust_bridge::for_generated::PlatformGeneralizedUint8ListPtr,
     rust_vec_len_: i32,
@@ -531,6 +586,41 @@ fn decode_DartFn_Inputs_String_opt_box_autoadd_i_16_Output_unit_AnyhowException(
             dart_opaque.clone(),
             arg0,
             arg1,
+        ))
+    }
+}
+fn decode_DartFn_Inputs_state_field_access_Output_String_AnyhowException(
+    dart_opaque: flutter_rust_bridge::DartOpaque,
+) -> impl Fn(crate::api::plugin::StateFieldAccess) -> flutter_rust_bridge::DartFnFuture<String> {
+    use flutter_rust_bridge::IntoDart;
+
+    async fn body(
+        dart_opaque: flutter_rust_bridge::DartOpaque,
+        arg0: crate::api::plugin::StateFieldAccess,
+    ) -> String {
+        let args = vec![arg0.into_into_dart().into_dart()];
+        let message = FLUTTER_RUST_BRIDGE_HANDLER
+            .dart_fn_invoke(dart_opaque, args)
+            .await;
+
+        let mut deserializer = flutter_rust_bridge::for_generated::SseDeserializer::new(message);
+        let action = deserializer.cursor.read_u8().unwrap();
+        let ans = match action {
+            0 => std::result::Result::Ok(<String>::sse_decode(&mut deserializer)),
+            1 => std::result::Result::Err(
+                <flutter_rust_bridge::for_generated::anyhow::Error>::sse_decode(&mut deserializer),
+            ),
+            _ => unreachable!(),
+        };
+        deserializer.end();
+        let ans = ans.expect("Dart throws exception but Rust side assume it is not failable");
+        ans
+    }
+
+    move |arg0: crate::api::plugin::StateFieldAccess| {
+        flutter_rust_bridge::for_generated::convert_into_dart_fn_future(body(
+            dart_opaque.clone(),
+            arg0,
         ))
     }
 }
@@ -726,6 +816,21 @@ impl SseDecode for Option<i16> {
     }
 }
 
+impl SseDecode for crate::api::plugin::StateFieldAccess {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        let mut inner = <i32>::sse_decode(deserializer);
+        return match inner {
+            0 => crate::api::plugin::StateFieldAccess::Table,
+            1 => crate::api::plugin::StateFieldAccess::TableName,
+            2 => crate::api::plugin::StateFieldAccess::Info,
+            3 => crate::api::plugin::StateFieldAccess::Players,
+            4 => crate::api::plugin::StateFieldAccess::TeamMembers,
+            _ => unreachable!("Invalid variant for StateFieldAccess: {}", inner),
+        };
+    }
+}
+
 impl SseDecode for u8 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -756,7 +861,7 @@ fn pde_ffi_dispatcher_primary_impl(
     match func_id {
         2 => wire__crate__api__luau__LuauPlugin_run_impl(port, ptr, rust_vec_len, data_len),
         3 => wire__crate__api__luau__LuauPlugin_run_event_impl(port, ptr, rust_vec_len, data_len),
-        10 => wire__crate__api__simple__simple_adder_twin_normal_impl(
+        11 => wire__crate__api__simple__simple_adder_twin_normal_impl(
             port,
             ptr,
             rust_vec_len,
@@ -790,7 +895,12 @@ fn pde_ffi_dispatcher_sync_impl(
             rust_vec_len,
             data_len,
         ),
-        7 => wire__crate__api__plugin__PluginCallback_default_impl(ptr, rust_vec_len, data_len),
+        7 => wire__crate__api__plugin__PluginCallback_change_state_field_access_impl(
+            ptr,
+            rust_vec_len,
+            data_len,
+        ),
+        8 => wire__crate__api__plugin__PluginCallback_default_impl(ptr, rust_vec_len, data_len),
         _ => unreachable!(),
     }
 }
@@ -846,6 +956,30 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::plugin::EventResult>
     for crate::api::plugin::EventResult
 {
     fn into_into_dart(self) -> crate::api::plugin::EventResult {
+        self
+    }
+}
+// Codec=Dco (DartCObject based), see doc to use other codecs
+impl flutter_rust_bridge::IntoDart for crate::api::plugin::StateFieldAccess {
+    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
+        match self {
+            Self::Table => 0.into_dart(),
+            Self::TableName => 1.into_dart(),
+            Self::Info => 2.into_dart(),
+            Self::Players => 3.into_dart(),
+            Self::TeamMembers => 4.into_dart(),
+            _ => unreachable!(),
+        }
+    }
+}
+impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
+    for crate::api::plugin::StateFieldAccess
+{
+}
+impl flutter_rust_bridge::IntoIntoDart<crate::api::plugin::StateFieldAccess>
+    for crate::api::plugin::StateFieldAccess
+{
+    fn into_into_dart(self) -> crate::api::plugin::StateFieldAccess {
         self
     }
 }
@@ -1011,6 +1145,25 @@ impl SseEncode for Option<i16> {
         if let Some(value) = self {
             <i16>::sse_encode(value, serializer);
         }
+    }
+}
+
+impl SseEncode for crate::api::plugin::StateFieldAccess {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <i32>::sse_encode(
+            match self {
+                crate::api::plugin::StateFieldAccess::Table => 0,
+                crate::api::plugin::StateFieldAccess::TableName => 1,
+                crate::api::plugin::StateFieldAccess::Info => 2,
+                crate::api::plugin::StateFieldAccess::Players => 3,
+                crate::api::plugin::StateFieldAccess::TeamMembers => 4,
+                _ => {
+                    unimplemented!("");
+                }
+            },
+            serializer,
+        );
     }
 }
 

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'package:networker/networker.dart';
@@ -19,11 +20,15 @@ final class PluginSystem {
       )> _plugins = {};
   final PluginProcessCallback _onProcess;
   final PluginSendEventCallback _onSendEvent;
+  final WorldState Function() stateGetter;
+  final List<int> Function() playersGetter;
 
-  PluginSystem(
-      {required PluginProcessCallback onProcess,
-      required PluginSendEventCallback onSendEvent})
-      : _onProcess = onProcess,
+  PluginSystem({
+    required PluginProcessCallback onProcess,
+    required PluginSendEventCallback onSendEvent,
+    required this.stateGetter,
+    required this.playersGetter,
+  })  : _onProcess = onProcess,
         _onSendEvent = onSendEvent;
 
   void registerPlugin(String name, SetonixPlugin plugin) {
@@ -36,8 +41,8 @@ final class PluginSystem {
 
   SetonixPlugin registerLuauPlugin(String name, String code,
       {void Function(String)? onPrint}) {
-    final plugin =
-        RustSetonixPlugin.build((c) => LuauPlugin(code: code, callback: c));
+    final plugin = RustSetonixPlugin.build(
+        (c) => LuauPlugin(code: code, callback: c), this);
     registerPlugin(name, plugin);
     return plugin;
   }
@@ -91,7 +96,8 @@ final class RustSetonixPlugin extends SetonixPlugin {
   RustSetonixPlugin._(this.plugin);
 
   factory RustSetonixPlugin.build(
-    RustPlugin Function(PluginCallback) builder, {
+    RustPlugin Function(PluginCallback) builder,
+    PluginSystem pluginSystem, {
     void Function(String)? onPrint,
   }) {
     final callback = PluginCallback.default_();
@@ -107,6 +113,16 @@ final class RustSetonixPlugin extends SetonixPlugin {
     callback.changeSendEvent(sendEvent: (eventSerizalized, target) {
       final event = PlayableWorldEventMapper.fromJson(eventSerizalized);
       instance.sendEvent(event, target ?? kAnyChannel);
+    });
+    callback.changeStateFieldAccess(stateFieldAccess: (field) {
+      final state = pluginSystem.stateGetter();
+      return switch (field) {
+        StateFieldAccess.info => state.info.toJson(),
+        StateFieldAccess.table => state.table.toJson(),
+        StateFieldAccess.tableName => jsonEncode(state.tableName),
+        StateFieldAccess.players => jsonEncode(pluginSystem.playersGetter()),
+        StateFieldAccess.teamMembers => jsonEncode(state.teamMembers),
+      };
     });
     return instance;
   }
